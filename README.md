@@ -53,3 +53,7 @@ Follows the `llmstxt.org` v2 specification:
 npm install
 npm run check
 ```
+
+---
+
+Built by Wael Zohny — crafting simple, deterministic AI tools at [Yosr AI](https://yosr.ai).
