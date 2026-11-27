@@ -133,6 +133,41 @@ describe('AGENTS.md rules', () => {
     }
   });
 
+  it('ignores casual prose words like "build" unless used as a real verification gate', () => {
+    const dir = makeTempDir();
+    try {
+      const prose = checkAgentsMdContent(
+        '# AGENTS.md\nWe build the site with a static generator.',
+        dir,
+        { maxTokens: 2000 },
+      );
+      assert.ok(prose.some((f) => f.rule === 'agents/verification-gate' && f.severity === 'warn'));
+
+      const inline = checkAgentsMdContent(
+        '# AGENTS.md\nRun `npm test` before committing.',
+        dir,
+        { maxTokens: 2000 },
+      );
+      assert.ok(!inline.some((f) => f.rule === 'agents/verification-gate'));
+
+      const cliProse = checkAgentsMdContent(
+        '# AGENTS.md\nAlways run npm test before committing.',
+        dir,
+        { maxTokens: 2000 },
+      );
+      assert.ok(!cliProse.some((f) => f.rule === 'agents/verification-gate'));
+
+      const fenced = checkAgentsMdContent(
+        ['# AGENTS.md', '```', 'cargo test', '```'].join('\n'),
+        dir,
+        { maxTokens: 2000 },
+      );
+      assert.ok(!fenced.some((f) => f.rule === 'agents/verification-gate'));
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('passes on examples/valid-repo', () => {
     const validDir = path.resolve('examples/valid-repo');
     const result = lintAgentsMd(validDir, { maxTokens: 2000 });
