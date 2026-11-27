@@ -1,0 +1,5 @@
+Broken Repo Without H1
+
+## Documentation
+- Plain list item without a markdown link
+- [Missing Doc](docs/missing.md): Broken local link.

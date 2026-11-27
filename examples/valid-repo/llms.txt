@@ -1,0 +1,6 @@
+# Valid Repo
+
+> Minimal passing fixture for agents-md-lint.
+
+## Documentation
+- [README](README.md): Project overview and setup notes.
