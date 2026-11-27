@@ -35,7 +35,7 @@ npx @wzohny/agents-md-lint --max-tokens 1500
 
 - `agents/non-empty` (`error`): File must not be empty or whitespace-only.
 - `agents/token-budget` (`warn`): Estimated token count (`Math.ceil(chars / 4)`) exceeds `--max-tokens`.
-- `agents/broken-path` (`error`): Backticked relative repo paths must exist on disk (ignores URLs, CLI flags, and shell commands).
+- `agents/broken-path` (`error`): Backticked relative repo paths and local Markdown link targets must exist on disk. External URLs, same-document anchors, CLI flags, and shell commands are ignored.
 - `agents/verification-gate` (`warn`): Should mention at least one verification/test/lint/build command.
 
 ### `llms.txt` (checked if present; silent if absent)

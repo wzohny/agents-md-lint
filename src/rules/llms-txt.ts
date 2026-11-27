@@ -1,26 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Finding } from '../types.js';
+import { localLinkTarget, MARKDOWN_LINK_RE } from './markdown-links.js';
 
 const FILE_NAME = 'llms.txt';
 const H1_RE = /^#\s+\S/;
 const H2_RE = /^##\s+\S/;
 const HEADING_RE = /^#{1,6}\s+/;
 const LIST_ITEM_RE = /^(?:[-*]|\d+\.)\s+/;
-const MARKDOWN_LINK_RE = /\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
-const EXTERNAL_SCHEME_RE = /^(?:https?:|mailto:|tel:|data:)/i;
-
-function isExternalOrAnchor(url: string): boolean {
-  return url.startsWith('#') || EXTERNAL_SCHEME_RE.test(url);
-}
-
-function stripQueryAndFragment(url: string): string {
-  const cleaned = url.replace(/^<|>$/g, '');
-  const hashIdx = cleaned.indexOf('#');
-  const withoutHash = hashIdx >= 0 ? cleaned.slice(0, hashIdx) : cleaned;
-  const queryIdx = withoutHash.indexOf('?');
-  return queryIdx >= 0 ? withoutHash.slice(0, queryIdx) : withoutHash;
-}
 
 export function checkLlmsTxtContent(content: string, rootDir: string): Finding[] {
   const findings: Finding[] = [];
@@ -98,10 +85,7 @@ export function checkLlmsTxtContent(content: string, rootDir: string): Finding[]
     let match: RegExpExecArray | null;
     while ((match = MARKDOWN_LINK_RE.exec(line)) !== null) {
       const rawUrl = match[2]?.trim() ?? '';
-      if (!rawUrl || isExternalOrAnchor(rawUrl)) {
-        continue;
-      }
-      const localTarget = stripQueryAndFragment(rawUrl);
+      const localTarget = localLinkTarget(rawUrl);
       if (!localTarget) {
         continue;
       }
