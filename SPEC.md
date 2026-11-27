@@ -33,7 +33,7 @@ npx @wzohny/agents-md-lint [path] [options]
 
 1. **`agents/non-empty`** (`error`): File must not be empty or whitespace-only.
 2. **`agents/token-budget`** (`warn`): Estimated token count (`chars / 4`) exceeds `--max-tokens` (default 2000).
-3. **`agents/broken-path`** (`error`): Local file/directory paths referenced in backticks (e.g., ``src/cli.ts``, ``package.json``) that look like relative repo paths must exist on disk. Ignore URLs, CLI flags, and shell commands.
+3. **`agents/broken-path`** (`error`): Relative file and directory paths in backticks or Markdown links must exist on disk. Ignore external URLs, same-document anchors, CLI flags, and shell commands.
 4. **`agents/verification-gate`** (`warn`): File should mention at least one verification/test/lint command (e.g., `test`, `lint`, `check`, `build`, `pytest`, `cargo test`).
 
 ### B. `llms.txt` Rules (checked if `llms.txt` exists; silent if absent)
@@ -61,7 +61,8 @@ agents-md-lint/
 │   ├── types.ts            # Shared types (Finding, LintResult, Severity)
 │   ├── rules/
 │   │   ├── agents-md.ts    # Rules for AGENTS.md (paths, tokens, gates)
-│   │   └── llms-txt.ts     # Rules for llms.txt (v2 spec compliance, links)
+│   │   ├── llms-txt.ts     # Rules for llms.txt (v2 spec compliance, links)
+│   │   └── markdown-links.ts # shared Markdown link parsing
 │   └── format.ts           # Human terminal output + --json formatter
 ├── test/
 │   ├── agents-md.test.ts   # Node built-in test runner (node:test)

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Finding, LintOptions } from '../types.js';
+import { localLinkTarget, MARKDOWN_LINK_RE } from './markdown-links.js';
 
 const FILE_NAME = 'AGENTS.md';
 const VERIFICATION_GATE_RE =
@@ -112,13 +113,21 @@ export function checkAgentsMdContent(
       continue;
     }
 
-    INLINE_CODE_RE.lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = INLINE_CODE_RE.exec(line)) !== null) {
+    const candidates: string[] = [];
+    for (const match of line.matchAll(INLINE_CODE_RE)) {
       const candidate = match[1]?.trim() ?? '';
-      if (!looksLikeRepoPath(candidate)) {
-        continue;
+      if (looksLikeRepoPath(candidate)) {
+        candidates.push(candidate);
       }
+    }
+    const markdown = line.replace(INLINE_CODE_RE, ' ');
+    for (const match of markdown.matchAll(MARKDOWN_LINK_RE)) {
+      const candidate = localLinkTarget(match[2] ?? '');
+      if (candidate && !candidate.startsWith('/') && !candidate.startsWith('~/')) {
+        candidates.push(candidate);
+      }
+    }
+    for (const candidate of candidates) {
       const resolved = path.resolve(rootDir, candidate);
       if (!fs.existsSync(resolved)) {
         findings.push({

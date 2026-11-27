@@ -96,6 +96,33 @@ describe('AGENTS.md rules', () => {
     }
   });
 
+  it('checks relative Markdown links outside code and skips URLs and anchors', () => {
+    const dir = makeTempDir();
+    try {
+      fs.mkdirSync(path.join(dir, 'docs'));
+      fs.writeFileSync(path.join(dir, 'docs', 'guide.md'), '# Guide');
+
+      const content = [
+        '# AGENTS.md',
+        'See [guide](docs/guide.md?view=1#setup), [directory](docs/), and [missing](docs/missing.md).',
+        'See [web](https://example.com/guide), [email](mailto:docs@example.com), and [jump](#setup).',
+        'Syntax example: `[guide](docs/placeholder.md)`.',
+        '~~~md',
+        '[fenced example](docs/placeholder.md)',
+        '~~~',
+        'Run `npm test`.',
+      ].join('\n');
+
+      const broken = checkAgentsMdContent(content, dir, { maxTokens: 2000 })
+        .filter((finding) => finding.rule === 'agents/broken-path');
+      assert.equal(broken.length, 1);
+      assert.equal(broken[0]?.line, 2);
+      assert.match(broken[0]?.message ?? '', /docs\/missing\.md/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('warns when no verification gate is mentioned', () => {
     const dir = makeTempDir();
     try {
