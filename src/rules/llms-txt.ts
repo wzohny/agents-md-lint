@@ -82,8 +82,7 @@ export function checkLlmsTxtContent(content: string, rootDir: string): Finding[]
     }
 
     MARKDOWN_LINK_RE.lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = MARKDOWN_LINK_RE.exec(line)) !== null) {
+    for (const match of line.matchAll(MARKDOWN_LINK_RE)) {
       const rawUrl = match[2]?.trim() ?? '';
       const localTarget = localLinkTarget(rawUrl);
       if (!localTarget) {
