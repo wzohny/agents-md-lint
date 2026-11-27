@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { checkLlmsTxtContent, lintLlmsTxt } from '../dist/rules/llms-txt.js';
-import type { LintResult } from '../dist/types.js';
+import { checkLlmsTxtContent, lintLlmsTxt } from '../src/rules/llms-txt.js';
+import type { LintResult } from '../src/types.js';
 
 function makeTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'llms-txt-lint-test-'));

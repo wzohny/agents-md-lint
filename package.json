@@ -10,15 +10,16 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "llms.txt"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit",
     "build": "tsc",
-    "test": "node --test test/*.test.ts",
+    "test": "tsc -p tsconfig.test.json && node --test dist-test/test/*.test.js",
     "lint:self": "node dist/cli.js .",
     "check": "npm run typecheck && npm run build && npm test && npm run lint:self"
   },

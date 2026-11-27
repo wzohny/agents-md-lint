@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { checkAgentsMdContent, lintAgentsMd } from '../dist/rules/agents-md.js';
+import { checkAgentsMdContent, lintAgentsMd } from '../src/rules/agents-md.js';
 
 function makeTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'agents-md-lint-test-'));
