@@ -5,14 +5,14 @@ Zero-dependency CLI linter that validates `AGENTS.md` and `llms.txt` files in an
 ## Quickstart
 
 ```bash
-npx agents-md-lint
+npx @wzohny/agents-md-lint
 ```
 
 Lint a specific directory or output machine-readable JSON:
 
 ```bash
-npx agents-md-lint ./path/to/repo --json
-npx agents-md-lint --max-tokens 1500
+npx @wzohny/agents-md-lint ./path/to/repo --json
+npx @wzohny/agents-md-lint --max-tokens 1500
 ```
 
 ## CLI Options

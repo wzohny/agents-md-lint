@@ -12,7 +12,7 @@ A zero-dependency CLI linter that validates `AGENTS.md` and `llms.txt` files in 
 
 ## CLI Interface
 ```bash
-npx agents-md-lint [path] [options]
+npx @wzohny/agents-md-lint [path] [options]
 ```
 
 * `[path]`: Target directory (defaults to `.`)
