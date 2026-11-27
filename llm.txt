@@ -1,0 +1,16 @@
+# agents-md-lint
+
+> Zero-dependency CLI linter for `AGENTS.md` and `llms.txt` files. Catches stale repo paths, context token bloat, missing verification gates, and `llms.txt` spec violations offline.
+
+Run in any repository with `npx agents-md-lint` or `npx agents-md-lint --json` for machine-readable CI/agent output. Exit codes: `0` (pass), `1` (lint errors), `2` (runtime error).
+
+## Documentation
+- [README.md](README.md): Quickstart, CLI flags, and rule reference.
+- [SPEC.md](SPEC.md): Exact v0.1.0 rule definitions, exit codes, and constraints.
+
+## Examples
+- [Valid Repository Fixture](examples/valid-repo/AGENTS.md): Minimal passing `AGENTS.md` and `llms.txt` setup.
+- [Broken Repository Fixture](examples/broken-repo/AGENTS.md): Example triggering broken-path and spec errors.
+
+## Optional
+- [AGENTS.md](AGENTS.md): Contributor rules and local verification gate for developing this repo.
