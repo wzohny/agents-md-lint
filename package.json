@@ -1,0 +1,29 @@
+{
+  "name": "agents-md-lint",
+  "version": "0.1.0",
+  "description": "Zero-dependency CLI linter for AGENTS.md and llms.txt files",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "agents-md-lint": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "test": "node --test test/*.test.ts",
+    "lint:self": "node dist/cli.js .",
+    "check": "npm run typecheck && npm run build && npm test && npm run lint:self"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
