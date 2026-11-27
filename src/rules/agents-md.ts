@@ -8,24 +8,66 @@ const VERIFICATION_GATE_RE =
 const INLINE_CODE_RE = /`([^`\n]+)`/g;
 const BARE_EXTENSION_RE = /^\.[a-z0-9]{1,6}$/i;
 const VERSION_LIKE_RE = /^v?\d+\.\d+(?:\.\d+)?$/i;
-const DOMAIN_TLD_RE = /\.(?:org|com|io|dev|net|ai|co)$/i;
 const DISALLOWED_PATH_CHARS_RE = /[\s*?<>|"'\[\]{}()$=,:;@]/;
+const KNOWN_FILE_EXTENSIONS = new Set([
+  'ts',
+  'tsx',
+  'js',
+  'jsx',
+  'mjs',
+  'cjs',
+  'json',
+  'md',
+  'txt',
+  'yml',
+  'yaml',
+  'toml',
+  'py',
+  'rs',
+  'go',
+  'sh',
+  'css',
+  'html',
+  'sql',
+  'env',
+  'lock',
+  'xml',
+  'csv',
+  'svg',
+]);
+
+function hasKnownExtension(segment: string): boolean {
+  const dotIdx = segment.lastIndexOf('.');
+  if (dotIdx <= 0 || dotIdx === segment.length - 1) {
+    return false;
+  }
+  const ext = segment.slice(dotIdx + 1).toLowerCase();
+  return KNOWN_FILE_EXTENSIONS.has(ext);
+}
 
 function looksLikeRepoPath(raw: string): boolean {
   const token = raw.trim();
-  if (!token || token.startsWith('-') || token.startsWith('/')) {
+  if (!token || token.startsWith('-') || token.startsWith('/') || token.startsWith('~')) {
     return false;
   }
   if (DISALLOWED_PATH_CHARS_RE.test(token)) {
     return false;
   }
-  if (BARE_EXTENSION_RE.test(token) || VERSION_LIKE_RE.test(token) || DOMAIN_TLD_RE.test(token)) {
+  if (BARE_EXTENSION_RE.test(token) || VERSION_LIKE_RE.test(token)) {
     return false;
   }
   if (token.includes('/')) {
-    return true;
+    if (token.startsWith('.') || token.endsWith('/')) {
+      return true;
+    }
+    const slashCount = token.split('/').length - 1;
+    if (slashCount >= 2) {
+      return true;
+    }
+    const lastSegment = token.slice(token.lastIndexOf('/') + 1);
+    return hasKnownExtension(lastSegment);
   }
-  return /^[A-Za-z0-9_.-]+\.[A-Za-z0-9]{1,6}$/.test(token);
+  return /^[A-Za-z0-9_.-]+$/.test(token) && hasKnownExtension(token);
 }
 
 export function checkAgentsMdContent(

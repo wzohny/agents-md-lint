@@ -75,6 +75,27 @@ describe('AGENTS.md rules', () => {
     }
   });
 
+  it('ignores home paths, dotted config keys, and owner/repo slugs while flagging real paths', () => {
+    const dir = makeTempDir();
+    try {
+      const content = [
+        '# AGENTS.md',
+        'Ignore home `~/.config/yosr`, config key `engines.yosr`, and slug `getyosr/yosr-seed`.',
+        'Flag `src/missing.ts`, `.github/workflows/`, and `seed.template.json`.',
+        'Run `npm test` to verify.',
+      ].join('\n');
+
+      const findings = checkAgentsMdContent(content, dir, { maxTokens: 2000 });
+      const broken = findings.filter((f) => f.rule === 'agents/broken-path');
+      assert.equal(broken.length, 3);
+      assert.match(broken[0]?.message ?? '', /src\/missing\.ts/);
+      assert.match(broken[1]?.message ?? '', /\.github\/workflows\//);
+      assert.match(broken[2]?.message ?? '', /seed\.template\.json/);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('warns when no verification gate is mentioned', () => {
     const dir = makeTempDir();
     try {
