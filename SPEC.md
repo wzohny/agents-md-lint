@@ -18,6 +18,7 @@ npx @wzohny/agents-md-lint [path] [options]
 * `[path]`: Target directory (defaults to `.`)
 * `--json`: Output machine-readable JSON array of findings + summary
 * `--strict`: Fail on warnings without changing finding severities
+* `--recursive`: Also check nested `AGENTS.md` files, skipping symlinked directories and common dependency or output directories
 * `--max-tokens <n>`: Override token bloat threshold for `AGENTS.md` (default: `2000`, estimated as `Math.ceil(chars / 4)`)
 * `--help` / `-h`: Print concise usage
 * `--version` / `-v`: Print package version
