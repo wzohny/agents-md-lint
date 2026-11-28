@@ -16,7 +16,7 @@
     "ai-agents",
     "cli"
   ],
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Zero-dependency CLI linter for AGENTS.md and llms.txt files",
   "license": "MIT",
   "type": "module",
