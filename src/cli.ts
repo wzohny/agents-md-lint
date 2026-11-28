@@ -9,6 +9,22 @@ import { lintLlmsTxt } from './rules/llms-txt.js';
 import type { Finding, LintResult } from './types.js';
 
 const DEFAULT_MAX_TOKENS = 2000;
+const IGNORED_DIRECTORIES = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage']);
+
+function findAgentDirectories(rootDir: string): string[] {
+  const pending = [rootDir];
+  const locations: string[] = [];
+  for (let directory = pending.pop(); directory !== undefined; directory = pending.pop()) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isDirectory() && !IGNORED_DIRECTORIES.has(entry.name)) {
+        pending.push(path.join(directory, entry.name));
+      } else if (entry.isFile() && entry.name === 'AGENTS.md') {
+        locations.push(directory);
+      }
+    }
+  }
+  return locations.sort();
+}
 
 function readPackageVersion(): string {
   const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -24,6 +40,7 @@ function printUsage(): void {
 Options:
   --json             Output machine-readable JSON
   --strict           Exit with status 1 if there are any lint warnings
+  --recursive        Also lint AGENTS.md in nested directories
   --max-tokens <n>   Token bloat threshold for AGENTS.md (default: ${DEFAULT_MAX_TOKENS})
   -h, --help         Show this help message
   -v, --version      Show package version`);
@@ -38,6 +55,7 @@ function main(): number {
       options: {
         json: { type: 'boolean', default: false },
         strict: { type: 'boolean', default: false },
+        recursive: { type: 'boolean', default: false },
         'max-tokens': { type: 'string' },
         help: { type: 'boolean', short: 'h', default: false },
         version: { type: 'boolean', short: 'v', default: false },
@@ -83,14 +101,20 @@ function main(): number {
     return 2;
   }
 
-  const agentsResult = lintAgentsMd(targetDir, { maxTokens });
-  const llmsResult = lintLlmsTxt(targetDir);
+  const directories = parsed.values.recursive ? findAgentDirectories(targetDir) : [];
+  if (directories.length === 0) directories.push(targetDir);
 
-  const findings: Finding[] = [...agentsResult.findings, ...llmsResult.findings];
+  const findings: Finding[] = [];
   const filesChecked: string[] = [];
-  if (agentsResult.checked) {
-    filesChecked.push('AGENTS.md');
+  for (const directory of directories) {
+    const agentsResult = lintAgentsMd(directory, { maxTokens });
+    const file = path.relative(targetDir, path.join(directory, 'AGENTS.md')).split(path.sep).join('/');
+    findings.push(...agentsResult.findings.map((finding) => ({ ...finding, file })));
+    if (agentsResult.checked) filesChecked.push(file);
   }
+
+  const llmsResult = lintLlmsTxt(targetDir);
+  findings.push(...llmsResult.findings);
   if (llmsResult.checked) {
     filesChecked.push('llms.txt');
   }

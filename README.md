@@ -20,6 +20,7 @@ npx @wzohny/agents-md-lint --max-tokens 1500
 - `[path]`: Target directory (defaults to `.`)
 - `--json`: Output machine-readable JSON findings and summary
 - `--strict`: Return exit code 1 for warnings as well as errors. Finding severities stay the same.
+- `--recursive`: Check nested `AGENTS.md` files as well as the target directory. Skips symlinked directories and directories named `.git`, `node_modules`, `dist`, `build`, or `coverage`. Each file's relative links are checked from its own directory. `llms.txt` is checked only at the target directory.
 - `--max-tokens <n>`: Override token bloat threshold for `AGENTS.md` (default: `2000`, estimated as `Math.ceil(chars / 4)`)
 - `--help`, `-h`: Print usage information
 - `--version`, `-v`: Print package version
