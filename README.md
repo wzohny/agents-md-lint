@@ -19,6 +19,7 @@ npx @wzohny/agents-md-lint --max-tokens 1500
 
 - `[path]`: Target directory (defaults to `.`)
 - `--json`: Output machine-readable JSON findings and summary
+- `--strict`: Return exit code 1 for warnings as well as errors. Finding severities stay the same.
 - `--max-tokens <n>`: Override token bloat threshold for `AGENTS.md` (default: `2000`, estimated as `Math.ceil(chars / 4)`)
 - `--help`, `-h`: Print usage information
 - `--version`, `-v`: Print package version

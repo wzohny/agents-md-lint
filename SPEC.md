@@ -17,14 +17,15 @@ npx @wzohny/agents-md-lint [path] [options]
 
 * `[path]`: Target directory (defaults to `.`)
 * `--json`: Output machine-readable JSON array of findings + summary
+* `--strict`: Fail on warnings without changing finding severities
 * `--max-tokens <n>`: Override token bloat threshold for `AGENTS.md` (default: `2000`, estimated as `Math.ceil(chars / 4)`)
 * `--help` / `-h`: Print concise usage
 * `--version` / `-v`: Print package version
 
 ## Exit Codes
 
-* `0`: All checks passed (warnings allowed unless `--strict` is added later)
-* `1`: One or more `error` findings detected
+* `0`: All checks passed (warnings allowed by default)
+* `1`: One or more `error` findings, or any `warn` findings with `--strict`
 * `2`: Runtime or CLI usage error (e.g., invalid directory)
 
 ## Lint Rules (v0.1.0)

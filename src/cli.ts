@@ -23,6 +23,7 @@ function printUsage(): void {
 
 Options:
   --json             Output machine-readable JSON
+  --strict           Exit with status 1 if there are any lint warnings
   --max-tokens <n>   Token bloat threshold for AGENTS.md (default: ${DEFAULT_MAX_TOKENS})
   -h, --help         Show this help message
   -v, --version      Show package version`);
@@ -36,6 +37,7 @@ function main(): number {
       allowPositionals: true,
       options: {
         json: { type: 'boolean', default: false },
+        strict: { type: 'boolean', default: false },
         'max-tokens': { type: 'string' },
         help: { type: 'boolean', short: 'h', default: false },
         version: { type: 'boolean', short: 'v', default: false },
@@ -101,7 +103,7 @@ function main(): number {
   };
 
   console.log(parsed.values.json ? formatJson(result) : formatHuman(result));
-  return errors > 0 ? 1 : 0;
+  return errors > 0 || (parsed.values.strict && warnings > 0) ? 1 : 0;
 }
 
 process.exitCode = main();
